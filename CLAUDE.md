@@ -29,7 +29,7 @@ infrastructure/ → Docker, Nginx, CI/CD
 docs/          → All documentation
 ```
 
-Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINTS.md`, and `RESPONSIBILITIES.md` under `docs/repositories/`.
+Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINTS.md`, `RESPONSIBILITIES.md`, and `DESIGN_PRINCIPLES.md` under `docs/repositories/`.
 
 ---
 
@@ -59,6 +59,7 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 - Read the relevant `ARCHITECTURE.md` before writing any code
 - Read the relevant `CONSTRAINTS.md` — do not violate constraints
 - Read the relevant `RESPONSIBILITIES.md` — do not work outside project boundaries
+- Read the relevant `DESIGN_PRINCIPLES.md` — understand the reasoning behind decisions
 
 ---
 
@@ -110,6 +111,22 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 - Read the relevant `ARCHITECTURE.md` and `CONSTRAINTS.md` first
 - If still unsure, state your uncertainty and propose two options — do not guess and implement
 - If a task requires touching more than one project, decompose it into per-project tickets
+
+---
+
+## Available Claude Skills (slash commands)
+
+Use these to reduce setup friction when starting or reviewing work:
+
+| Command | Purpose |
+| ------- | ------- |
+| `/ticket GOV-{ID} {scope} {description}` | Create branch, load all mandatory docs for the ticket's scope |
+| `/new-module {name} GOV-{ID}` | Scaffold a new API module with all required files |
+| `/new-page {section/page} GOV-{ID}` | Scaffold a new web page in the correct App Router location |
+| `/check` | Review current diff against RULES, CONSTRAINTS, and DESIGN_PRINCIPLES |
+| `/trip-context` | Load complete student transportation lifecycle into context |
+| `/student-status` | Reference all canonical student status states and attendance options |
+| `/incident` | Load incident reporting flow and constraints |
 
 ---
 

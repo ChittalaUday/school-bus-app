@@ -11,6 +11,12 @@
 | Understand the product              | [Product Design Document](product/PRODUCT.md)      |
 | Understand the system               | [Architecture Overview](architecture/system-overview.md) |
 | Start a new feature                 | [AI Workflow Rules](workflows/AI_WORKFLOW_RULES.md) |
+| Start a ticket (AI skill)           | `/ticket GOV-{ID} {scope} {description}`           |
+| Scaffold an API module (AI skill)   | `/new-module {name} GOV-{ID}`                      |
+| Scaffold a web page (AI skill)      | `/new-page {section/page} GOV-{ID}`                |
+| Check changes for rule violations   | `/check`                                           |
+| Load trip lifecycle context         | `/trip-context`                                    |
+| Reference student status states     | `/student-status`                                  |
 | Understand git/branch rules         | [Git Workflow](workflows/git-workflow.md)          |
 | Review a PR                         | [Code Review](workflows/code-review.md)            |
 | Understand why X was chosen         | [ADR Index](#architecture-decisions)               |
@@ -58,31 +64,36 @@ docs/
 │   │   ├── ARCHITECTURE.md
 │   │   ├── RULES.md
 │   │   ├── CONSTRAINTS.md
-│   │   └── RESPONSIBILITIES.md
+│   │   ├── RESPONSIBILITIES.md
+│   │   └── DESIGN_PRINCIPLES.md       ← Why and how decisions are made in this repo
 │   ├── web/                           ← Next.js web app repo docs
 │   │   ├── README.md
 │   │   ├── ARCHITECTURE.md
 │   │   ├── RULES.md
 │   │   ├── CONSTRAINTS.md
-│   │   └── RESPONSIBILITIES.md
+│   │   ├── RESPONSIBILITIES.md
+│   │   └── DESIGN_PRINCIPLES.md
 │   ├── mobile-driver/                 ← Driver app repo docs
 │   │   ├── README.md
 │   │   ├── ARCHITECTURE.md
 │   │   ├── RULES.md
 │   │   ├── CONSTRAINTS.md
-│   │   └── RESPONSIBILITIES.md
+│   │   ├── RESPONSIBILITIES.md
+│   │   └── DESIGN_PRINCIPLES.md
 │   ├── mobile-parent/                 ← Parent app repo docs
 │   │   ├── README.md
 │   │   ├── ARCHITECTURE.md
 │   │   ├── RULES.md
 │   │   ├── CONSTRAINTS.md
-│   │   └── RESPONSIBILITIES.md
+│   │   ├── RESPONSIBILITIES.md
+│   │   └── DESIGN_PRINCIPLES.md
 │   └── shared/                        ← Shared packages repo docs
 │       ├── README.md
 │       ├── ARCHITECTURE.md
 │       ├── RULES.md
 │       ├── CONSTRAINTS.md
-│       └── RESPONSIBILITIES.md
+│       ├── RESPONSIBILITIES.md
+│       └── DESIGN_PRINCIPLES.md
 │
 ├── standards/
 │   ├── typescript.md                  ← TypeScript conventions
