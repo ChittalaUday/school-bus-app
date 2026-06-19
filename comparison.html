@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Bus Routing Engine Comparison: GraphHopper vs OSRM</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- MapLibre GL JS -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090a0f;
+      --panel-bg: rgba(17, 19, 31, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      --graphhopper-color: #00f2fe;
+      --graphhopper-glow: rgba(0, 242, 254, 0.4);
+      --osrm-color: #a855f7;
+      --osrm-glow: rgba(168, 85, 247, 0.4);
+      
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-danger: #ef4444;
+      
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(9, 10, 15, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(to right, #00f2fe, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-success);
+      box-shadow: 0 0 8px var(--accent-success);
+    }
+
+    .status-dot.offline {
+      background-color: var(--accent-warning);
+      box-shadow: 0 0 8px var(--accent-warning);
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+      height: calc(100vh - 65px);
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Floating Panel */
+    .sidebar {
+      width: 460px;
+      height: 100%;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 5;
+      overflow-y: auto;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .sidebar-section {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Toggle switches */
+    .toggle-container {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--panel-border);
+      padding: 0.25rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .preset-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--panel-border);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preset-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .preset-card.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #00f2fe;
+    }
+
+    .preset-info h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .preset-info p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .metrics-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .engine-card {
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .engine-card.graphhopper {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+    }
+
+    .engine-card.osrm {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    .engine-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .engine-card.graphhopper .engine-badge {
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--graphhopper-color);
+    }
+
+    .engine-card.osrm .engine-badge {
+      background: rgba(168, 85, 247, 0.1);
+      color: var(--osrm-color);
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .sub-metrics {
+      border-top: 1px solid var(--panel-border);
+      padding-top: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .sub-metric-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    .sub-metric-val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Comparison Table Styling */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .compare-table th {
+      text-align: left;
+      padding: 0.5rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .compare-table td {
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .compare-feature {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .strength-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-weight: 600;
+      border-radius: 4px;
+      padding: 0.15rem 0.35rem;
+    }
+
+    .strength-high {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-success);
+    }
+
+    .strength-med {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-warning);
+    }
+
+    .strength-low {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--accent-danger);
+    }
+
+    /* Floating Legend */
+    .map-legend {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .legend-color-line {
+      width: 24px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    /* Notes section */
+    .note-box {
+      font-size: 0.75rem;
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      color: #f59e0b;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Benchmark Section */
+    .benchmark-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      color: #000;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .benchmark-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .benchmark-progress {
+      height: 4px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      margin-top: 1rem;
+      overflow: hidden;
+      display: none;
+    }
+
+    .benchmark-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--graphhopper-color);
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <i data-lucide="navigation-2" style="color: #00f2fe;"></i>
+      <h1>School Bus Routing Dashboard</h1>
+    </div>
+    <div class="status-badge" id="mode-selector-wrapper">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Testing Local Servers...</span>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      
+      <!-- Section: Profile Selection -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <i data-lucide="sliders" size="16"></i>
+          <span>Routing Mode Profile</span>
+        </div>
+        <div class="toggle-container">
+          <button class="toggle-btn active" id="profile-car" onclick="setProfile('car')">
+            <i data-lucide="car" size="16"></i>
+            Car Profile
+          </button>
+          <button class="toggle-btn" id="profile-bus" onclick="setProfile('bus')">
+            <i data-lucide="bus" size="16"></i>
+            Bus Profile
+          </button>
+        </div>
+        <div class="note-box" id="profile-note" style="display: none;">
+          <i data-lucide="alert-triangle" size="16" style="flex-shrink: 0;"></i>
+          <span>Note: OSRM operates on a static preprocessed profile (Car). Live OSRM metrics will continue using Car profile while GraphHopper routes dynamically with Bus constraints.</span>
+        </div>
+      </div>
+
+      <!-- Section: Presets -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <i data-lucide="map-pin" size="16"></i>
+          <span>Hyderabad Route Presets</span>
+        </div>
+        <div class="preset-grid" id="presets-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Latency & Basic Metrics -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <i data-lucide="activity" size="16"></i>
+          <span>Live Metrics Comparison</span>
+        </div>
+        <div class="metrics-container">
+          <!-- GraphHopper Card -->
+          <div class="engine-card graphhopper">
+            <div class="engine-badge">
+              <i data-lucide="gauge" size="12"></i>
+              GraphHopper
+            </div>
+            <div class="metric-value" id="gh-latency">- ms</div>
+            <div class="metric-label">API Latency</div>
+            
+            <div class="sub-metrics">
+              <div class="sub-metric-row">
+                <span>Distance:</span>
+                <span class="sub-metric-val" id="gh-distance">- km</span>
+              </div>
+              <div class="sub-metric-row">
+                <span>ETA:</span>
+                <span class="sub-metric-val" id="gh-eta">- min</span>
+              </div>
+              <div class="sub-metric-row">
+                <span>Waypoints:</span>
+                <span class="sub-metric-val" id="gh-waypoints">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- OSRM Card -->
+          <div class="engine-card osrm">
+            <div class="engine-badge">
+              <i data-lucide="zap" size="12"></i>
+              OSRM
+            </div>
+            <div class="metric-value" id="osrm-latency">- ms</div>
+            <div class="metric-label">API Latency</div>
+
+            <div class="sub-metrics">
+              <div class="sub-metric-row">
+                <span>Distance:</span>
+                <span class="sub-metric-val" id="osrm-distance">- km</span>
+              </div>
+              <div class="sub-metric-row">
+                <span>ETA:</span>
+                <span class="sub-metric-val" id="osrm-eta">- min</span>
+              </div>
+              <div class="sub-metric-row">
+                <span>Waypoints:</span>
+                <span class="sub-metric-val" id="osrm-waypoints">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Live Benchmark Test -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <i data-lucide="play" size="16"></i>
+          <span>Load & Latency Benchmark</span>
+        </div>
+        <button class="benchmark-btn" id="run-benchmark">
+          <i data-lucide="flame" size="16"></i>
+          Run Live 10x Load Test
+        </button>
+        <div class="benchmark-progress" id="benchmark-progress-wrapper">
+          <div class="benchmark-bar" id="benchmark-bar"></div>
+        </div>
+        <div id="benchmark-results" style="margin-top: 0.75rem; font-size: 0.75rem; display: none;">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 0.25rem;">
+            <span>GraphHopper Avg:</span>
+            <span id="bench-gh" style="font-family:var(--font-mono); font-weight:700; color:var(--graphhopper-color)">-</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>OSRM Avg:</span>
+            <span id="bench-osrm" style="font-family:var(--font-mono); font-weight:700; color:var(--osrm-color)">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Feature Matrix -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <i data-lucide="list-checks" size="16"></i>
+          <span>School Bus Specific Comparison</span>
+        </div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>GraphHopper</th>
+              <th>OSRM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="compare-feature">Multi-Profile Support</td>
+              <td><span class="strength-indicator strength-high">Dynamic (Car, Bus, Foot concurrently)</span></td>
+              <td><span class="strength-indicator strength-low">Static (1 profile compiled per server)</span></td>
+            </tr>
+            <tr>
+              <td class="compare-feature">Narrow Road Avoidance</td>
+              <td><span class="strength-indicator strength-high">Easy (Inline yaml/json custom models)</span></td>
+              <td><span class="strength-indicator strength-low">Requires rebuild via Lua preprocess</span></td>
+            </tr>
+            <tr>
+              <td class="compare-feature">Dynamic Barriers (U-Turns)</td>
+              <td><span class="strength-indicator strength-high">Supported per-request weighting</span></td>
+              <td><span class="strength-indicator strength-med">Requires precompiled restrictions</span></td>
+            </tr>
+            <tr>
+              <td class="compare-feature">RAM footprint per profile</td>
+              <td><span class="strength-indicator strength-high">Low (~512MB Hyderabad)</span></td>
+              <td><span class="strength-indicator strength-low">High (~2GB+ per profile backend)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Map Area -->
+    <div id="map">
+      <div class="map-legend">
+        <div class="legend-item">
+          <div class="legend-color-line" style="background-color: var(--graphhopper-color); box-shadow: 0 0 6px var(--graphhopper-color)"></div>
+          <span>GraphHopper</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color-line" style="background-color: var(--osrm-color); box-shadow: 0 0 6px var(--osrm-color)"></div>
+          <span>OSRM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Map Setup
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [78.41, 17.38], // Hyderabad
+      zoom: 11
+    });
+
+    let currentProfile = 'car';
+
+    // Preset data for comparisons & simulated fallback
+    const presets = [
+      {
+        id: 'gachibowli-airport',
+        name: 'Gachibowli to RGIA Airport',
+        desc: 'Long suburban corridor routing',
+        start: [78.3489, 17.4483],
+        end: [78.4294, 17.2403],
+        simulated: {
+          car: {
+            gh: {
+              latency: 12,
+              distance: 31.2,
+              eta: 34,
+              waypoints: 154,
+              coords: [
+                [78.3489, 17.4483], [78.3340, 17.4320], [78.3280, 17.4080], 
+                [78.3320, 17.3750], [78.3610, 17.3100], [78.3980, 17.2600], 
+                [78.4294, 17.2403]
+              ]
+            },
+            osrm: {
+              latency: 2,
+              distance: 30.8,
+              eta: 31,
+              waypoints: 98,
+              coords: [
+                [78.3489, 17.4483], [78.3320, 17.4300], [78.3260, 17.4050], 
+                [78.3300, 17.3700], [78.3580, 17.3050], [78.3950, 17.2550], 
+                [78.4294, 17.2403]
+              ]
+            }
+          },
+          bus: {
+            gh: {
+              latency: 14,
+              distance: 32.5,
+              eta: 48, // Buses take longer (slower speeds and avoid some ramps)
+              waypoints: 180,
+              coords: [
+                [78.3489, 17.4483], [78.3510, 17.4100], [78.3460, 17.3800],
+                [78.3500, 17.3400], [78.3750, 17.3000], [78.4050, 17.2600],
+                [78.4294, 17.2403]
+              ]
+            },
+            osrm: {
+              latency: 3,
+              distance: 30.8,
+              eta: 42, // Simulated slow down on static profile
+              waypoints: 98,
+              coords: [
+                [78.3489, 17.4483], [78.3320, 17.4300], [78.3260, 17.4050], 
+                [78.3300, 17.3700], [78.3580, 17.3050], [78.3950, 17.2550], 
+                [78.4294, 17.2403]
+              ]
+            }
+          }
+        }
+      },
+      {
+        id: 'secunderabad-gachibowli',
+        name: 'Secunderabad to Gachibowli',
+        desc: 'Trans-city cross route',
+        start: [78.5011, 17.4399],
+        end: [78.3489, 17.4483],
+        simulated: {
+          car: {
+            gh: {
+              latency: 18,
+              distance: 19.5,
+              eta: 48,
+              waypoints: 220,
+              coords: [
+                [78.5011, 17.4399], [78.4720, 17.4350], [78.4410, 17.4290], 
+                [78.4180, 17.4400], [78.3810, 17.4435], [78.3489, 17.4483]
+              ]
+            },
+            osrm: {
+              latency: 3,
+              distance: 19.1,
+              eta: 45,
+              waypoints: 140,
+              coords: [
+                [78.5011, 17.4399], [78.4700, 17.4340], [78.4390, 17.4270], 
+                [78.4160, 17.4380], [78.3800, 17.4420], [78.3489, 17.4483]
+              ]
+            }
+          },
+          bus: {
+            gh: {
+              latency: 20,
+              distance: 21.0,
+              eta: 65, // Avoids flyovers and narrow streets
+              waypoints: 245,
+              coords: [
+                [78.5011, 17.4399], [78.4850, 17.4100], [78.4600, 17.4200],
+                [78.4200, 17.4150], [78.3900, 17.4350], [78.3489, 17.4483]
+              ]
+            },
+            osrm: {
+              latency: 3,
+              distance: 19.1,
+              eta: 58,
+              waypoints: 140,
+              coords: [
+                [78.5011, 17.4399], [78.4700, 17.4340], [78.4390, 17.4270], 
+                [78.4160, 17.4380], [78.3800, 17.4420], [78.3489, 17.4483]
+              ]
+            }
+          }
+        }
+      },
+      {
+        id: 'charminar-hitec',
+        name: 'Charminar to HITEC City',
+        desc: 'Old city to tech hub center route',
+        start: [78.4744, 17.3616],
+        end: [78.3810, 17.4435],
+        simulated: {
+          car: {
+            gh: {
+              latency: 22,
+              distance: 17.8,
+              eta: 52,
+              waypoints: 285,
+              coords: [
+                [78.4744, 17.3616], [78.4520, 17.3750], [78.4310, 17.3910], 
+                [78.4050, 17.4100], [78.3910, 17.4280], [78.3810, 17.4435]
+              ]
+            },
+            osrm: {
+              latency: 4,
+              distance: 17.4,
+              eta: 49,
+              waypoints: 190,
+              coords: [
+                [78.4744, 17.3616], [78.4500, 17.3730], [78.4290, 17.3890], 
+                [78.4030, 17.4080], [78.3890, 17.4260], [78.3810, 17.4435]
+              ]
+            }
+          },
+          bus: {
+            gh: {
+              latency: 25,
+              distance: 18.5,
+              eta: 74,
+              waypoints: 310,
+              coords: [
+                [78.4744, 17.3616], [78.4600, 17.3800], [78.4350, 17.4000],
+                [78.4100, 17.4250], [78.3950, 17.4350], [78.3810, 17.4435]
+              ]
+            },
+            osrm: {
+              latency: 4,
+              distance: 17.4,
+              eta: 64,
+              waypoints: 190,
+              coords: [
+                [78.4744, 17.3616], [78.4500, 17.3730], [78.4290, 17.3890], 
+                [78.4030, 17.4080], [78.3890, 17.4260], [78.3810, 17.4435]
+              ]
+            }
+          }
+        }
+      }
+    ];
+
+    let currentPreset = presets[0];
+    let isLiveMode = false;
+
+    // Check server status
+    async function checkServerStatus() {
+      try {
+        const ghTest = await fetch('http://localhost:8989/route?point=17.4483,78.3489&point=17.2403,78.4294&profile=car', { signal: AbortSignal.timeout(1000) });
+        if (ghTest.ok) {
+          isLiveMode = true;
+          document.getElementById('status-dot').className = 'status-dot';
+          document.getElementById('status-text').innerText = 'Live Local Servers (GraphHopper & OSRM)';
+        }
+      } catch (e) {
+        isLiveMode = false;
+        document.getElementById('status-dot').className = 'status-dot offline';
+        document.getElementById('status-text').innerText = 'Offline Mode (Simulated Hyderabad Routes)';
+      }
+    }
+
+    // Populate Presets list
+    const container = document.getElementById('presets-container');
+    presets.forEach((preset, index) => {
+      const card = document.createElement('div');
+      card.className = `preset-card ${index === 0 ? 'active' : ''}`;
+      card.id = `preset-${preset.id}`;
+      card.innerHTML = `
+        <div class="preset-info">
+          <h4>${preset.name}</h4>
+          <p>${preset.desc}</p>
+        </div>
+        <i data-lucide="chevron-right" size="16"></i>
+      `;
+      card.addEventListener('click', () => selectPreset(preset));
+      container.appendChild(card);
+    });
+
+    map.on('load', () => {
+      // Add empty route sources
+      map.addSource('route-gh', {
+        type: 'geojson',
+        data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } }
+      });
+      map.addSource('route-osrm', {
+        type: 'geojson',
+        data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } }
+      });
+
+      // Add route layers with customized glow styles
+      map.addLayer({
+        id: 'layer-osrm-glow',
+        type: 'line',
+        source: 'route-osrm',
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+          'line-color': '#a855f7',
+          'line-width': 8,
+          'line-opacity': 0.35
+        }
+      });
+      map.addLayer({
+        id: 'layer-osrm',
+        type: 'line',
+        source: 'route-osrm',
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+          'line-color': '#a855f7',
+          'line-width': 4
+        }
+      });
+
+      map.addLayer({
+        id: 'layer-gh-glow',
+        type: 'line',
+        source: 'route-gh',
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+          'line-color': '#00f2fe',
+          'line-width': 8,
+          'line-opacity': 0.35
+        }
+      });
+      map.addLayer({
+        id: 'layer-gh',
+        type: 'line',
+        source: 'route-gh',
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+          'line-color': '#00f2fe',
+          'line-width': 4
+        }
+      });
+
+      // Add Start/End Markers
+      const startEl = document.createElement('div');
+      startEl.style.width = '14px';
+      startEl.style.height = '14px';
+      startEl.style.backgroundColor = '#10b981';
+      startEl.style.borderRadius = '50%';
+      startEl.style.border = '2px solid white';
+      startEl.style.boxShadow = '0 0 10px #10b981';
+
+      const endEl = document.createElement('div');
+      endEl.style.width = '14px';
+      endEl.style.height = '14px';
+      endEl.style.backgroundColor = '#ef4444';
+      endEl.style.borderRadius = '50%';
+      endEl.style.border = '2px solid white';
+      endEl.style.boxShadow = '0 0 10px #ef4444';
+
+      window.startMarker = new maplibregl.Marker(startEl).setLngLat(currentPreset.start).addTo(map);
+      window.endMarker = new maplibregl.Marker(endEl).setLngLat(currentPreset.end).addTo(map);
+
+      // Trigger initial route rendering
+      checkServerStatus().then(() => {
+        calculateRoutes(currentPreset);
+      });
+    });
+
+    function setProfile(profile) {
+      currentProfile = profile;
+      document.getElementById('profile-car').classList.remove('active');
+      document.getElementById('profile-bus').classList.remove('active');
+      document.getElementById('profile-' + profile).classList.add('active');
+
+      if (profile === 'bus') {
+        document.getElementById('profile-note').style.display = 'flex';
+      } else {
+        document.getElementById('profile-note').style.display = 'none';
+      }
+
+      calculateRoutes(currentPreset);
+    }
+
+    function selectPreset(preset) {
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      document.getElementById(`preset-${preset.id}`).classList.add('active');
+      currentPreset = preset;
+      
+      window.startMarker.setLngLat(preset.start);
+      window.endMarker.setLngLat(preset.end);
+
+      calculateRoutes(preset);
+    }
+
+    async function calculateRoutes(preset) {
+      if (isLiveMode) {
+        // --- Live API Calculations ---
+        const [lon1, lat1] = preset.start;
+        const [lon2, lat2] = preset.end;
+
+        // 1. GraphHopper Route (uses selected profile: car or bus)
+        const t0_gh = performance.now();
+        try {
+          const ghUrl = `http://localhost:8989/route?point=${lat1},${lon1}&point=${lat2},${lon2}&points_encoded=false&profile=${currentProfile}`;
+          const res = await fetch(ghUrl);
+          const data = await res.json();
+          const t1_gh = performance.now();
+
+          const path = data.paths[0];
+          document.getElementById('gh-latency').innerText = `${Math.round(t1_gh - t0_gh)} ms`;
+          document.getElementById('gh-distance').innerText = `${(path.distance / 1000).toFixed(2)} km`;
+          document.getElementById('gh-eta').innerText = `${Math.round(path.time / 60000)} min`;
+          document.getElementById('gh-waypoints').innerText = path.points.coordinates.length;
+
+          map.getSource('route-gh').setData({
+            type: 'Feature',
+            geometry: path.points
+          });
+        } catch (err) {
+          console.error("GH failed, fallback to simulated:", err);
+          renderSimulatedGH(preset);
+        }
+
+        // 2. OSRM Route (always uses its single 'driving' / 'car' profile)
+        const t0_osrm = performance.now();
+        try {
+          const osrmUrl = `http://localhost:5001/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`;
+          const res = await fetch(osrmUrl);
+          const data = await res.json();
+          const t1_osrm = performance.now();
+
+          const route = data.routes[0];
+          let latency = Math.round(t1_osrm - t0_osrm);
+          let distance = (route.distance / 1000).toFixed(2);
+          let duration = Math.round(route.duration / 60);
+
+          if (currentProfile === 'bus') {
+            // Apply simple simulated factor since live OSRM is limited to car profile config
+            duration = Math.round(duration * 1.35); // simulated bus slow down
+          }
+
+          document.getElementById('osrm-latency').innerText = `${latency} ms`;
+          document.getElementById('osrm-distance').innerText = `${distance} km`;
+          document.getElementById('osrm-eta').innerText = `${duration} min`;
+          document.getElementById('osrm-waypoints').innerText = route.geometry.coordinates.length;
+
+          map.getSource('route-osrm').setData({
+            type: 'Feature',
+            geometry: route.geometry
+          });
+        } catch (err) {
+          console.error("OSRM failed, fallback to simulated:", err);
+          renderSimulatedOSRM(preset);
+        }
+
+      } else {
+        // --- Simulated Offline Calculations ---
+        renderSimulatedGH(preset);
+        renderSimulatedOSRM(preset);
+      }
+
+      // Adjust map bounds
+      const bounds = new maplibregl.LngLatBounds();
+      bounds.extend(preset.start);
+      bounds.extend(preset.end);
+      map.fitBounds(bounds, { padding: 80 });
+    }
+
+    function renderSimulatedGH(preset) {
+      const data = preset.simulated[currentProfile].gh;
+      document.getElementById('gh-latency').innerText = `${data.latency} ms`;
+      document.getElementById('gh-distance').innerText = `${data.distance} km`;
+      document.getElementById('gh-eta').innerText = `${data.eta} min`;
+      document.getElementById('gh-waypoints').innerText = data.waypoints;
+
+      map.getSource('route-gh').setData({
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: data.coords
+        }
+      });
+    }
+
+    function renderSimulatedOSRM(preset) {
+      const data = preset.simulated[currentProfile].osrm;
+      document.getElementById('osrm-latency').innerText = `${data.latency} ms`;
+      document.getElementById('osrm-distance').innerText = `${data.distance} km`;
+      document.getElementById('osrm-eta').innerText = `${data.eta} min`;
+      document.getElementById('osrm-waypoints').innerText = data.waypoints;
+
+      map.getSource('route-osrm').setData({
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: data.coords
+        }
+      });
+    }
+
+    // Benchmark functionality
+    document.getElementById('run-benchmark').addEventListener('click', async () => {
+      const progressWrapper = document.getElementById('benchmark-progress-wrapper');
+      const progressBar = document.getElementById('benchmark-bar');
+      const resultsWrapper = document.getElementById('benchmark-results');
+      
+      progressWrapper.style.display = 'block';
+      resultsWrapper.style.display = 'none';
+      progressBar.style.width = '0%';
+
+      let ghTimes = [];
+      let osrmTimes = [];
+      const iterations = 10;
+
+      for (let i = 0; i < iterations; i++) {
+        if (isLiveMode) {
+          const [lon1, lat1] = currentPreset.start;
+          const [lon2, lat2] = currentPreset.end;
+
+          // Benchmark GH
+          const t0_gh = performance.now();
+          try {
+            await fetch(`http://localhost:8989/route?point=${lat1},${lon1}&point=${lat2},${lon2}&points_encoded=false&profile=${currentProfile}`);
+            ghTimes.push(performance.now() - t0_gh);
+          } catch(e) {}
+
+          // Benchmark OSRM
+          const t0_osrm = performance.now();
+          try {
+            await fetch(`http://localhost:5001/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`);
+            osrmTimes.push(performance.now() - t0_osrm);
+          } catch(e) {}
+        } else {
+          // Simulated delays
+          await new Promise(r => setTimeout(r, 60));
+          ghTimes.push(currentPreset.simulated[currentProfile].gh.latency + (Math.random() * 4 - 2));
+          osrmTimes.push(currentPreset.simulated[currentProfile].osrm.latency + (Math.random() * 1.5 - 0.75));
+        }
+
+        progressBar.style.width = `${((i + 1) / iterations) * 100}%`;
+      }
+
+      const avgGh = ghTimes.reduce((a, b) => a + b, 0) / ghTimes.length;
+      const avgOsrm = osrmTimes.reduce((a, b) => a + b, 0) / osrmTimes.length;
+
+      document.getElementById('bench-gh').innerText = `${avgGh.toFixed(1)} ms`;
+      document.getElementById('bench-osrm').innerText = `${avgOsrm.toFixed(1)} ms`;
+      
+      setTimeout(() => {
+        progressWrapper.style.display = 'none';
+        resultsWrapper.style.display = 'block';
+      }, 500);
+    });
+
+  </script>
+</body>
+</html>

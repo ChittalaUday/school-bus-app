@@ -1,0 +1,24 @@
+services:
+  osrm-preprocess:
+    image: osrm/osrm-backend:latest
+    container_name: osrm-preprocess
+    volumes:
+      - ./data:/data
+    command: >
+      sh -c "
+        osrm-extract -p /data/hyderabad.lua /data/hyderabad.osm.pbf &&
+        osrm-partition /data/hyderabad.osrm &&
+        osrm-customize /data/hyderabad.osrm
+      "
+    profiles:
+      - preprocess
+
+  osrm-backend:
+    image: osrm/osrm-backend:latest
+    container_name: osrm-backend
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./data:/data
+    command: osrm-routed --algorithm mld /data/hyderabad.osrm
+    restart: unless-stopped
