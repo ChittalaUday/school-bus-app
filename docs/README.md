@@ -8,6 +8,7 @@
 
 | I want to...                        | Go to                                              |
 | ----------------------------------- | -------------------------------------------------- |
+| Understand the product              | [Product Design Document](product/PRODUCT.md)      |
 | Understand the system               | [Architecture Overview](architecture/system-overview.md) |
 | Start a new feature                 | [AI Workflow Rules](workflows/AI_WORKFLOW_RULES.md) |
 | Understand git/branch rules         | [Git Workflow](workflows/git-workflow.md)          |
@@ -29,6 +30,9 @@
 docs/
 │
 ├── README.md                          ← You are here
+│
+├── product/
+│   └── PRODUCT.md                     ← Product goals, vision, user roles, flows (read first)
 │
 ├── architecture/
 │   ├── system-overview.md             ← High-level system design
@@ -121,8 +125,9 @@ docs/
 ## Mandatory Reading Order
 
 1. This file (`docs/README.md`)
-2. [AI Workflow Rules](workflows/AI_WORKFLOW_RULES.md)
-3. [Architecture Overview](architecture/system-overview.md)
-4. The relevant repository docs under `repositories/`
+2. [Product Design Document](product/PRODUCT.md)
+3. [AI Workflow Rules](workflows/AI_WORKFLOW_RULES.md)
+4. [Architecture Overview](architecture/system-overview.md)
+5. The relevant repository docs under `repositories/`
 
-No implementation should begin without completing steps 1–4.
+No implementation should begin without completing steps 1–5.

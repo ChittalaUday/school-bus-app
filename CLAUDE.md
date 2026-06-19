@@ -11,9 +11,10 @@ You are working on **Govexa**, a school bus tracking and management platform for
 Before touching any code, read these files in order:
 
 1. `docs/README.md` — documentation index and project map
-2. `docs/workflows/AI_WORKFLOW_RULES.md` — all workflow and governance rules
-3. `docs/architecture/system-overview.md` — system architecture
-4. The relevant project docs under `docs/repositories/{api|web|mobile|shared}/`
+2. `docs/product/PRODUCT.md` — product goals, user roles, lifecycle flows, and module scope
+3. `docs/workflows/AI_WORKFLOW_RULES.md` — all workflow and governance rules
+4. `docs/architecture/system-overview.md` — system architecture
+5. The relevant project docs under `docs/repositories/{api|web|mobile|shared}/`
 
 ---
 
