@@ -24,7 +24,7 @@ root/
 
 ## Rationale
 
-- **Type sharing**: `packages/shared` allows TypeScript types and Zod schemas to be shared between API, web, and mobile without duplication or divergence
+- **Type sharing**: `apps/shared` allows TypeScript types and Zod schemas to be shared between API, web, and mobile without duplication or divergence
 - **Single source of truth**: One repository for issues, PRs, and CI configuration
 - **pnpm over npm/yarn workspaces**: Faster installs, strict dependency isolation (no phantom dependencies), smaller `node_modules` via content-addressable store
 - **Not Turborepo (yet)**: Added when build caching becomes a pain point. Premature optimization at this stage.
@@ -32,7 +32,7 @@ root/
 ## Consequences
 
 - All projects share the same `pnpm-lock.yaml` — dependency updates affect all projects
-- `packages/shared` must be versioned carefully — breaking changes require coordinated updates
+- `apps/shared` must be versioned carefully — breaking changes require coordinated updates
 - Mobile (`apps/mobile`) will need its own build tooling separate from the workspace (Metro bundler doesn't play well with workspace symlinks by default — managed via `metro.config.js` resolver)
 
 ## Alternatives Considered

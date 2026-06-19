@@ -1,4 +1,4 @@
-# Shared Responsibilities — `packages/shared`
+# Shared Responsibilities — `apps/shared`
 
 ---
 

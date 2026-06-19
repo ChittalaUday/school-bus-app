@@ -41,5 +41,5 @@ export default fp({module}Plugin);
 
 5. After scaffolding, remind the developer:
    - Register the plugin in `apps/api/src/app.ts`
-   - Export any shared types to `packages/shared` if web or mobile will consume them
+   - Export any shared types to `apps/shared` if web or mobile will consume them
    - Every service method needs a test before the ticket is done (per `CONSTRAINTS.md`)

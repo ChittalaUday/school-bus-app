@@ -39,7 +39,7 @@ Tests verify behavior, not implementation.
 | `apps/api` | Vitest |
 | `apps/web` | Vitest + React Testing Library |
 | `apps/mobile` | Jest + React Native Testing Library |
-| `packages/shared` | Vitest |
+| `apps/shared` | Vitest |
 
 ---
 

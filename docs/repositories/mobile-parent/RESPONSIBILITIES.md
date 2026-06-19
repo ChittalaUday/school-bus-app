@@ -54,7 +54,7 @@ Deep-link from notification directly to the relevant student status screen.
 - Driver-facing trip execution — that is `apps/mobile-driver`
 - Admin / management functionality — that is `apps/web`
 - Route or fleet configuration — that is `apps/web`
-- Shared types and schemas — those live in `packages/shared`
+- Shared types and schemas — those live in `apps/shared`
 - Any write operations on transportation data — parents are read-only
 
 ---

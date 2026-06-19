@@ -1,11 +1,11 @@
-# Shared Architecture — `packages/shared`
+# Shared Architecture — `apps/shared`
 
 ---
 
 ## Structure
 
 ```
-packages/shared/
+apps/shared/
 ├── src/
 │   ├── types/        # TypeScript type definitions
 │   ├── schemas/      # Zod validation schemas
@@ -86,6 +86,6 @@ export const SOCKET_EVENTS = {
 
 ## Dependency Rule
 
-`packages/shared` has zero runtime dependencies (except `zod`).
+`apps/shared` has zero runtime dependencies (except `zod`).
 
 It must be importable in Node.js, browser, and React Native without modification.

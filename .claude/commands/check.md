@@ -7,7 +7,7 @@ Review the current git diff against the rules, constraints, and design principle
 ---
 
 1. Run `git diff HEAD` to see all current changes.
-2. Identify which repository/repositories are modified (`apps/api`, `apps/web`, `apps/mobile-driver`, `apps/mobile-parent`, `packages/shared`).
+2. Identify which repository/repositories are modified (`apps/api`, `apps/web`, `apps/mobile-driver`, `apps/mobile-parent`, `apps/shared`).
 3. For each affected repository, read:
    - `docs/repositories/{repo}/RULES.md`
    - `docs/repositories/{repo}/CONSTRAINTS.md`

@@ -13,11 +13,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "db:generate": "prisma generate --schema ../../packages/shared/prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev --schema ../../packages/shared/prisma/schema.prisma",
-    "db:push": "prisma db push --schema ../../packages/shared/prisma/schema.prisma",
+    "db:generate": "prisma generate --schema ../shared/prisma/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema ../shared/prisma/schema.prisma",
+    "db:push": "prisma db push --schema ../shared/prisma/schema.prisma",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio --config ../../packages/shared/prisma/schema.prisma"
+    "db:studio": "prisma studio --config ../shared/prisma/schema.prisma"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

@@ -1,25 +1,31 @@
 {
   "info": {
     "name": "Govexa API",
-    "description": "Complete API collection for the Govexa student transportation platform.\n\n**Environments:**\n- Local: `http://localhost:3000`\n- Staging: set `baseUrl` variable accordingly\n\n**Auth:** Most endpoints require `Authorization: Bearer {{accessToken}}`.\nObtain a token via `POST /api/auth/login` and set the `accessToken` collection variable.\n\n**Maintenance rule:** Every route added or changed in `apps/api` MUST have a matching\nrequest added or updated here in the same PR. See `docs/repositories/api/RULES.md`.",
+    "description": "Complete API collection for the Govexa student transportation platform.\n\n**Environments:**\n- Local: `http://localhost:3000`\n- Staging: set `govexa_baseUrl` variable accordingly\n\n**Auth:** Most endpoints require `Authorization: Bearer {{govexa_accessToken}}`.\nObtain a token via `POST /api/auth/login` and set the `govexa_accessToken` collection variable.\n\n**Maintenance rule:** Every route added or changed in `apps/api` MUST have a matching\nrequest added or updated here in the same PR. See `docs/repositories/api/RULES.md`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_postman_id": "govexa-api-v1"
   },
   "variable": [
     {
-      "key": "baseUrl",
+      "key": "govexa_baseUrl",
       "value": "http://localhost:3000",
       "type": "string",
       "description": "API base URL. Override per environment."
     },
     {
-      "key": "accessToken",
+      "key": "govexa_graphhopperUrl",
+      "value": "http://localhost:8989",
+      "type": "string",
+      "description": "GraphHopper routing engine URL."
+    },
+    {
+      "key": "govexa_accessToken",
       "value": "",
       "type": "string",
       "description": "JWT access token. Set after login."
     },
     {
-      "key": "refreshToken",
+      "key": "govexa_refreshToken",
       "value": "",
       "type": "string",
       "description": "JWT refresh token. Set after login."
@@ -30,7 +36,7 @@
     "bearer": [
       {
         "key": "token",
-        "value": "{{accessToken}}",
+        "value": "{{govexa_accessToken}}",
         "type": "string"
       }
     ]
@@ -46,8 +52,8 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/health",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{govexa_baseUrl}}/health",
+              "host": ["{{govexa_baseUrl}}"],
               "path": ["health"]
             },
             "description": "Returns the liveness status of the API, PostgreSQL, and Redis.\n\n**Auth:** None required.\n\n**200 — all services healthy:**\n```json\n{\n  \"status\": \"ok\",\n  \"version\": \"0.0.1\",\n  \"env\": \"development\",\n  \"services\": {\n    \"database\": \"ok\",\n    \"redis\": \"ok\"\n  }\n}\n```\n\n**503 — one or more services degraded:**\n```json\n{\n  \"status\": \"degraded\",\n  \"services\": {\n    \"database\": \"error\",\n    \"redis\": \"ok\"\n  }\n}\n```"
@@ -58,8 +64,8 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/health",
-                  "host": ["{{baseUrl}}"],
+                  "raw": "{{govexa_baseUrl}}/health",
+                  "host": ["{{govexa_baseUrl}}"],
                   "path": ["health"]
                 }
               },
@@ -73,8 +79,8 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/health",
-                  "host": ["{{baseUrl}}"],
+                  "raw": "{{govexa_baseUrl}}/health",
+                  "host": ["{{govexa_baseUrl}}"],
                   "path": ["health"]
                 }
               },
@@ -84,6 +90,170 @@
               "body": "{\n  \"status\": \"degraded\",\n  \"version\": \"0.0.1\",\n  \"env\": \"development\",\n  \"services\": {\n    \"database\": \"error\",\n    \"redis\": \"ok\"\n  }\n}"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "GraphHopper (Routing Engine)",
+      "description": "GraphHopper routing engine endpoints running on port 8989.\nUsed for route calculation, ETA, and rerouting.\nProfiles available: `bus`, `car`, `foot`.\nDataset: Hyderabad region.",
+      "item": [
+        {
+          "name": "GH — Info",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/info",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["info"]
+            },
+            "description": "Returns GraphHopper server info including available routing profiles, bounding box, and version.\n\n**Auth:** None required."
+          },
+          "response": [
+            {
+              "name": "200 — Info",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"bbox\": [78.136424, 17.049139, 78.830896, 17.691684],\n  \"profiles\": [\n    { \"name\": \"car\" },\n    { \"name\": \"bus\" },\n    { \"name\": \"foot\" }\n  ],\n  \"version\": \"12.0\",\n  \"elevation\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "GH — Route (Bus Profile)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/route?point=17.385044,78.486671&point=17.440081,78.348915&profile=bus&instructions=true&calc_points=true&points_encoded=false",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["route"],
+              "query": [
+                { "key": "point", "value": "17.385044,78.486671", "description": "Start: Charminar, Hyderabad" },
+                { "key": "point", "value": "17.440081,78.348915", "description": "End: HITEC City, Hyderabad" },
+                { "key": "profile", "value": "bus", "description": "Routing profile (bus, car, foot)" },
+                { "key": "instructions", "value": "true", "description": "Include turn-by-turn instructions" },
+                { "key": "calc_points", "value": "true", "description": "Return route geometry" },
+                { "key": "points_encoded", "value": "false", "description": "Return coordinates as plain arrays instead of encoded polyline" }
+              ]
+            },
+            "description": "Calculate a bus route between two points in Hyderabad.\n\n**Auth:** None required.\n\n**Default test route:** Charminar → HITEC City.\n\nReturns distance (meters), time (ms), and turn-by-turn instructions."
+          },
+          "response": []
+        },
+        {
+          "name": "GH — Route (Car Profile)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/route?point=17.385044,78.486671&point=17.440081,78.348915&profile=car&instructions=true&calc_points=true&points_encoded=false",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["route"],
+              "query": [
+                { "key": "point", "value": "17.385044,78.486671", "description": "Start: Charminar" },
+                { "key": "point", "value": "17.440081,78.348915", "description": "End: HITEC City" },
+                { "key": "profile", "value": "car", "description": "Car routing profile" },
+                { "key": "instructions", "value": "true" },
+                { "key": "calc_points", "value": "true" },
+                { "key": "points_encoded", "value": "false" }
+              ]
+            },
+            "description": "Calculate a car route. Same points as bus route for comparison."
+          },
+          "response": []
+        },
+        {
+          "name": "GH — Route (Multi-Stop Bus)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/route?point=17.385044,78.486671&point=17.4239,78.4738&point=17.440081,78.348915&profile=bus&instructions=true&calc_points=true&points_encoded=false",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["route"],
+              "query": [
+                { "key": "point", "value": "17.385044,78.486671", "description": "Stop 1: Charminar" },
+                { "key": "point", "value": "17.4239,78.4738", "description": "Stop 2: Secunderabad Station" },
+                { "key": "point", "value": "17.440081,78.348915", "description": "Stop 3: HITEC City" },
+                { "key": "profile", "value": "bus" },
+                { "key": "instructions", "value": "true" },
+                { "key": "calc_points", "value": "true" },
+                { "key": "points_encoded", "value": "false" }
+              ]
+            },
+            "description": "Calculate a multi-stop bus route — simulates a real school bus run with multiple stops.\n\nRoute: Charminar → Secunderabad Station → HITEC City."
+          },
+          "response": []
+        },
+        {
+          "name": "GH — Route POST (Flexible)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"points\": [\n    [78.486671, 17.385044],\n    [78.4738, 17.4239],\n    [78.348915, 17.440081]\n  ],\n  \"profile\": \"bus\",\n  \"instructions\": true,\n  \"calc_points\": true,\n  \"points_encoded\": false,\n  \"details\": [\"road_class\", \"surface\", \"max_speed\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/route",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["route"]
+            },
+            "description": "POST-based route request with more options.\n\n**Note:** In POST body, coordinates are `[lon, lat]` (opposite of GET params).\n\nIncludes `details` for road_class, surface, and max_speed per segment."
+          },
+          "response": []
+        },
+        {
+          "name": "GH — Isochrone (Bus 15min)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/isochrone?point=17.385044,78.486671&profile=bus&time_limit=900&buckets=3",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["isochrone"],
+              "query": [
+                { "key": "point", "value": "17.385044,78.486671", "description": "Center: Charminar" },
+                { "key": "profile", "value": "bus", "description": "Bus routing profile" },
+                { "key": "time_limit", "value": "900", "description": "Time limit in seconds (15 minutes)" },
+                { "key": "buckets", "value": "3", "description": "Number of isochrone bands (5min, 10min, 15min)" }
+              ]
+            },
+            "description": "Generate isochrone polygons showing areas reachable by bus within 15 minutes from Charminar.\n\nUseful for coverage analysis and stop planning."
+          },
+          "response": []
+        },
+        {
+          "name": "GH — Matrix (Travel Times)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"points\": [\n    [78.486671, 17.385044],\n    [78.4738, 17.4239],\n    [78.348915, 17.440081],\n    [78.3915, 17.4456]\n  ],\n  \"profile\": \"bus\",\n  \"out_arrays\": [\"times\", \"distances\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{govexa_graphhopperUrl}}/matrix",
+              "host": ["{{govexa_graphhopperUrl}}"],
+              "path": ["matrix"]
+            },
+            "description": "Compute a distance/time matrix between multiple points.\n\nUseful for optimizing stop order and calculating ETAs between all stops on a route.\n\nReturns NxN matrices of travel times (seconds) and distances (meters)."
+          },
+          "response": []
         }
       ]
     },

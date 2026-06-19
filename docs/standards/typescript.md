@@ -1,6 +1,6 @@
 # TypeScript Standards
 
-Applies to all TypeScript projects: `apps/api`, `apps/web`, `apps/mobile`, `packages/shared`.
+Applies to all TypeScript projects: `apps/api`, `apps/web`, `apps/mobile`, `apps/shared`.
 
 ---
 
@@ -132,7 +132,7 @@ Each project configures path aliases for clean imports:
 {
   "paths": {
     "@/*": ["./src/*"],
-    "@shared/*": ["../../packages/shared/src/*"]
+    "@shared/*": ["../../apps/shared/src/*"]
   }
 }
 

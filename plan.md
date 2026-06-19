@@ -38,7 +38,7 @@ govexa/
   - GraphHopper (existing)
   - Nginx
 - [ ] Zod-validated `.env` schema loaded at API startup
-- [ ] Shared `packages/shared` — types, Zod schemas, constants
+- [ ] Shared `apps/shared` — types, Zod schemas, constants
 
 ---
 

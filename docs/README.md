@@ -129,7 +129,7 @@ docs/
 | Web | `apps/web` | Next.js admin and school portal |
 | Mobile Driver | `apps/mobile-driver` | React Native driver app |
 | Mobile Parent | `apps/mobile-parent` | React Native parent app |
-| Shared | `packages/shared` | Types, Zod schemas, constants |
+| Shared | `apps/shared` | Types, Zod schemas, constants |
 
 ---
 

@@ -36,4 +36,4 @@ List all notification events from PRODUCT.md section 9 with example message copy
 
 ---
 
-These are the only valid status values in the entire system. Any code that introduces a new status or label not in this table must update `packages/shared` and this reference first.
+These are the only valid status values in the entire system. Any code that introduces a new status or label not in this table must update `apps/shared` and this reference first.

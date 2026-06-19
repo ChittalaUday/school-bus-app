@@ -18,7 +18,7 @@
 ## Forms
 
 - All forms use React Hook Form + Zod resolver
-- Zod schemas imported from `packages/shared` when the schema is shared with the API
+- Zod schemas imported from `apps/shared` when the schema is shared with the API
 - No uncontrolled inputs in forms that submit to the API
 
 ## Map (MapLibre)

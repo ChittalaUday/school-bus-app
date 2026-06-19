@@ -6,7 +6,7 @@ These rules apply exclusively to `apps/api`. Follow them on every change.
 
 ## Module Boundaries
 
-- A module may only import from: its own files, `plugins/`, `utils/`, `packages/shared`
+- A module may only import from: its own files, `plugins/`, `utils/`, `apps/shared`
 - Modules must NOT import from other modules directly
 - Cross-module communication happens through service calls injected via Fastify's decorator pattern or passed as arguments — never via direct file imports between modules
 
@@ -34,7 +34,7 @@ import { tripService } from "../trips/trip.service";
 
 - Every route must have a Zod schema for body, params, and query
 - Schemas defined in `module.schema.ts` — not inline in route definitions
-- Schemas exported from `packages/shared` when used by web or mobile
+- Schemas exported from `apps/shared` when used by web or mobile
 
 ## Database Access
 

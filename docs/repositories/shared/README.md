@@ -1,4 +1,4 @@
-# Shared — `packages/shared`
+# Shared — `apps/shared`
 
 Shared TypeScript types, Zod schemas, and constants used across `apps/api`, `apps/web`, and `apps/mobile`.
 
@@ -6,12 +6,12 @@ Shared TypeScript types, Zod schemas, and constants used across `apps/api`, `app
 
 ## Purpose
 
-Single source of truth for the data contracts between the API and its clients. When the API changes a response shape or adds a new field, updating `packages/shared` propagates the change to all consumers with TypeScript errors.
+Single source of truth for the data contracts between the API and its clients. When the API changes a response shape or adds a new field, updating `apps/shared` propagates the change to all consumers with TypeScript errors.
 
 ## Contents
 
 ```
-packages/shared/src/
+apps/shared/src/
 │
 ├── types/
 │   ├── user.types.ts
@@ -51,7 +51,7 @@ import { SOCKET_EVENTS } from "@govexa/shared";
 
 ## Rules
 
-- `packages/shared` must have zero runtime dependencies
+- `apps/shared` must have zero runtime dependencies
 - Only TypeScript types, Zod schemas, and plain constants
 - No Node.js-specific code (no `fs`, `path`, etc.)
 - No React or React Native imports

@@ -69,7 +69,7 @@ The exception is map components, which have no shadcn equivalents and must be bu
 
 ## 8. Forms Validate on the Client and Trust the API
 
-React Hook Form + Zod gives us client-side validation for free. Use the same Zod schemas from `packages/shared` that the API uses. This means validation errors are consistent across web and API.
+React Hook Form + Zod gives us client-side validation for free. Use the same Zod schemas from `apps/shared` that the API uses. This means validation errors are consistent across web and API.
 
 However: the client validates for UX (instant feedback), not for security. The API is the source of truth. Never skip server-side validation because the client already validated.
 

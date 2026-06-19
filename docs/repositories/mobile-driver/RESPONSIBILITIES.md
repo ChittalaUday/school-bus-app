@@ -50,7 +50,7 @@ All four attendance stages are owned exclusively by this app:
 - Parent-facing tracking — that is `apps/mobile-parent`
 - Admin / management functionality — that is `apps/web`
 - Route creation or fleet management — that is `apps/web`
-- Shared types and schemas — those live in `packages/shared`
+- Shared types and schemas — those live in `apps/shared`
 
 ---
 

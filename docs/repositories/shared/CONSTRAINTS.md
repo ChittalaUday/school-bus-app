@@ -1,4 +1,4 @@
-# Shared Constraints — `packages/shared`
+# Shared Constraints — `apps/shared`
 
 ---
 

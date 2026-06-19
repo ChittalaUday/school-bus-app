@@ -53,7 +53,7 @@ apps/web/src/
 │   └── utils.ts                  # shadcn/ui cn() helper
 │
 └── types/
-    └── index.ts                  # Re-exports from packages/shared
+    └── index.ts                  # Re-exports from apps/shared
 ```
 
 ---

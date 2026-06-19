@@ -24,7 +24,7 @@ importers:
         version: 6.0.4
       '@govexa/shared':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../shared
       '@prisma/adapter-pg':
         specifier: ^7.8.0
         version: 7.8.0
@@ -78,12 +78,18 @@ importers:
         specifier: ^3.0.0
         version: 3.2.6(@types/node@22.19.21)
 
-  packages/shared:
+  apps/shared:
     dependencies:
       zod:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
+      '@prisma/client':
+        specifier: ^7.8.0
+        version: 7.8.0(prisma@7.8.0(@types/react@19.2.17)(magicast@0.3.5)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(typescript@5.9.3)
+      prisma:
+        specifier: ^7.8.0
+        version: 7.8.0(@types/react@19.2.17)(magicast@0.3.5)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3

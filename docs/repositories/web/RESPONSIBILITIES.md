@@ -45,7 +45,7 @@
 - Push notifications — that is `apps/api` + Novu
 - Driver trip execution — that is `apps/mobile-driver`
 - Parent real-time tracking experience — that is `apps/mobile-parent`
-- Shared types and schemas — those live in `packages/shared`
+- Shared types and schemas — those live in `apps/shared`
 - Next.js API routes — there are none; all API calls go directly to `apps/api`
 
 ---

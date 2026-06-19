@@ -164,7 +164,7 @@ Only then may implementation begin.
 - Skip the planning step
 - Ignore repository and module boundaries
 - Introduce hidden dependencies between projects
-- Create duplicate code or utilities that already exist in `packages/shared`
+- Create duplicate code or utilities that already exist in `apps/shared`
 - Refactor code unrelated to the current ticket
 - Make architecture decisions without creating or updating an ADR
 - Write code that violates the project's `CONSTRAINTS.md`

@@ -58,7 +58,7 @@ API responses for trip/attendance data should always make the student identity o
 
 Socket.IO events emitted by the API are consumed by the web portal and mobile apps. Changing an event name or payload shape breaks clients silently at runtime.
 
-- Event names and payload shapes must be defined in `packages/shared`
+- Event names and payload shapes must be defined in `apps/shared`
 - Never rename or reshape a socket event without updating all consumers
 
 ---

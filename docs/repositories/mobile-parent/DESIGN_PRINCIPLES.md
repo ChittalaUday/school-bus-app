@@ -55,7 +55,7 @@ They should see:
 - "Arjun is on the bus heading to school"
 - "Arjun has arrived safely at school"
 
-Status labels in `packages/shared` must have a parent-facing display string, not just the internal enum value.
+Status labels in `apps/shared` must have a parent-facing display string, not just the internal enum value.
 
 ---
 

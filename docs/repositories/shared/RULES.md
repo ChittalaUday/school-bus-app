@@ -1,9 +1,9 @@
-# Shared Rules — `packages/shared`
+# Shared Rules — `apps/shared`
 
 ---
 
 - Every export is a public API — treat breaking changes with the same care as an external library
-- A breaking change in `packages/shared` requires updating all consumers (`apps/api`, `apps/web`, `apps/mobile`) in the same PR or a coordinated ticket
+- A breaking change in `apps/shared` requires updating all consumers (`apps/api`, `apps/web`, `apps/mobile`) in the same PR or a coordinated ticket
 - Zod schemas are the source of truth for data contracts — TypeScript types are inferred from them, not written separately
 
 ```typescript

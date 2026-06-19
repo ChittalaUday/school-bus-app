@@ -37,7 +37,7 @@ Reviews ensure architecture compliance, code quality, security, and documentatio
 
 - [ ] Follows the project's `RULES.md` conventions
 - [ ] Follows `docs/standards/naming.md`
-- [ ] No duplicated logic that belongs in `packages/shared`
+- [ ] No duplicated logic that belongs in `apps/shared`
 - [ ] No dead code committed
 - [ ] No `console.log` or debug artifacts committed
 - [ ] No hardcoded secrets, URLs, or environment values

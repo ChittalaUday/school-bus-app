@@ -24,7 +24,7 @@ Before touching any code, read these files in order:
 apps/api/      → Fastify backend (Node.js + TypeScript)
 apps/web/      → Next.js admin portal
 apps/mobile/   → React Native driver + parent app
-packages/shared/ → Shared types, Zod schemas, constants
+apps/shared/   → Shared types, Zod schemas, constants
 infrastructure/ → Docker, Nginx, CI/CD
 docs/          → All documentation
 ```
@@ -50,7 +50,7 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 ### No Spaghetti
 
 - Respect module boundaries — do not import between modules in `apps/api`
-- Do not import between `apps/` projects — use `packages/shared` for shared code
+- Do not import between `apps/` projects — use `apps/shared` for shared code
 - No business logic in route handlers or UI components
 - No database access outside of service layer in the API
 

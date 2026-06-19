@@ -96,7 +96,7 @@ External:
 - Live bus tracking, ETA, push notifications
 - No direct database access — calls API only
 
-### `packages/shared`
+### `apps/shared`
 - TypeScript types shared across API, Web, Mobile
 - Zod schemas for shared validation
 - Constants (route status, user roles, etc.)

@@ -21,7 +21,7 @@
 
 - Frontend rendering — that is `apps/web`
 - Mobile app UI — that is `apps/mobile`
-- TypeScript type definitions shared with web/mobile — those live in `packages/shared`
+- TypeScript type definitions shared with web/mobile — those live in `apps/shared`
 - GraphHopper data preprocessing — that is the `graphhopper/` setup scripts
 - Nginx configuration — that is `infrastructure/`
 - Database schema migrations after initial setup are owned here, but must be reviewed carefully as they affect all consumers

@@ -1,4 +1,4 @@
-# Shared Package Design Principles — `packages/shared`
+# Shared Package Design Principles — `apps/shared`
 
 These principles guide what belongs in shared and how it is structured. The shared package is the contract layer between all applications.
 
@@ -6,7 +6,7 @@ These principles guide what belongs in shared and how it is structured. The shar
 
 ## 1. Shared Is a Contract, Not a Utility Bucket
 
-Code goes in `packages/shared` when it represents a contract between two or more applications — not simply because it might be useful in multiple places.
+Code goes in `apps/shared` when it represents a contract between two or more applications — not simply because it might be useful in multiple places.
 
 Ask: "If I change this, do I need to update both the API and at least one client?" If yes, it belongs in shared. If it is only used in one application, it stays there.
 
@@ -14,7 +14,7 @@ Ask: "If I change this, do I need to update both the API and at least one client
 
 ## 2. Zod Schemas Are the Source of Truth
 
-Zod schemas in `packages/shared` are the canonical definition of every data shape that crosses application boundaries. TypeScript types for request bodies, response payloads, and socket events are all derived from Zod schemas using `z.infer<>` — they are never written by hand separately.
+Zod schemas in `apps/shared` are the canonical definition of every data shape that crosses application boundaries. TypeScript types for request bodies, response payloads, and socket events are all derived from Zod schemas using `z.infer<>` — they are never written by hand separately.
 
 If an API response shape changes, the Zod schema changes first. Every consumer that imports that schema gets type errors automatically.
 
@@ -53,7 +53,7 @@ UI code never writes its own label strings for shared status values.
 
 ## 5. Socket Event Definitions Live Here
 
-Socket.IO event names and their payload types are defined in `packages/shared/socket-events.ts`. This is the shared contract between the API (which emits) and the web/mobile apps (which listen).
+Socket.IO event names and their payload types are defined in `apps/shared/socket-events.ts`. This is the shared contract between the API (which emits) and the web/mobile apps (which listen).
 
 ```typescript
 export const SocketEvents = {
@@ -72,7 +72,7 @@ export type BusLocationPayload = {
 };
 ```
 
-Renaming an event name in `packages/shared` causes type errors in every file that uses it — making breaking changes visible at compile time.
+Renaming an event name in `apps/shared` causes type errors in every file that uses it — making breaking changes visible at compile time.
 
 ---
 
