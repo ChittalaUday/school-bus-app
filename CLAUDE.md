@@ -123,7 +123,8 @@ Use these to reduce setup friction when starting or reviewing work:
 | `/ticket GOV-{ID} {scope} {description}` | Create branch, load all mandatory docs for the ticket's scope |
 | `/new-module {name} GOV-{ID}` | Scaffold a new API module with all required files |
 | `/new-page {section/page} GOV-{ID}` | Scaffold a new web page in the correct App Router location |
-| `/check` | Review current diff against RULES, CONSTRAINTS, and DESIGN_PRINCIPLES |
+| `/check` | Review current diff against RULES, CONSTRAINTS, DESIGN_PRINCIPLES, and Postman sync |
+| `/postman` | Sync Postman collection with current route files (run after any route change) |
 | `/trip-context` | Load complete student transportation lifecycle into context |
 | `/student-status` | Reference all canonical student status states and attendance options |
 | `/incident` | Load incident reporting flow and constraints |
@@ -137,3 +138,4 @@ A task is complete only when:
 - Tests written and passing
 - Documentation updated if behavior changed
 - PR is reviewable (< 400 lines, single concern)
+- **If the ticket touches `apps/api` routes:** Postman collection updated (`apps/api/postman/govexa-api.postman_collection.json`)

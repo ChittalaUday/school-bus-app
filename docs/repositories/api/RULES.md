@@ -61,6 +61,39 @@ import { tripService } from "../trips/trip.service";
 - Integration tests use a real test database — no Prisma mocks
 - Tests must not depend on execution order (each test seeds its own data)
 
+## Postman Collection (mandatory)
+
+The Postman collection at `apps/api/postman/govexa-api.postman_collection.json` is the authoritative API contract for manual testing and integration documentation.
+
+**Rules:**
+
+- Every new route added to `apps/api` MUST have a corresponding request added to the Postman collection in the same PR
+- Every changed route (URL, method, request body, response shape) MUST have its Postman entry updated in the same PR
+- Deleted routes MUST have their Postman entry removed in the same PR
+- A PR that adds or changes routes but does not update the collection will not pass review
+
+**Collection structure:**
+
+The collection is organized by domain module (System, Auth, Students, Parents, Drivers, Buses, Routes, Trips, Tracking, Attendance, Incidents). Each request must include:
+
+| Field | Requirement |
+|---|---|
+| Name | Clear, action-oriented (e.g. "Create Student", "Start Trip") |
+| Method + URL | Exact path using `{{baseUrl}}` variable |
+| Auth | Set to "Inherit from parent" (Bearer token applied at collection level) or "No Auth" for public endpoints |
+| Description | Purpose, required auth role, request body fields, and example responses (200, 4xx) |
+| Example response | At least one saved example response for the happy path |
+
+**Environment variables used:**
+
+| Variable | Purpose |
+|---|---|
+| `{{baseUrl}}` | API base URL — defaults to `http://localhost:3000` |
+| `{{accessToken}}` | JWT access token — set via login request |
+| `{{refreshToken}}` | JWT refresh token — set via login request |
+
+---
+
 ## Naming (API-specific)
 
 | Item | Convention |
