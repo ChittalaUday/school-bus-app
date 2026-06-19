@@ -45,7 +45,8 @@ Govexa is a school bus tracking and management platform for Hyderabad. It enable
 └─────────────────────────────────────────────────────────────────────┘
 
 External:
-  Mobile App (React Native) ──▶ Nginx ──▶ API (REST + Socket.IO)
+  Mobile Driver (React Native) ──▶ Nginx ──▶ API (REST + Socket.IO)
+  Mobile Parent (React Native) ──▶ Nginx ──▶ API (REST + Socket.IO)
 ```
 
 ---
@@ -87,9 +88,12 @@ External:
 - Live tracking map (MapLibre GL JS)
 - No direct database access — calls API only
 
-### React Native Mobile (`apps/mobile`)
-- Driver: GPS broadcasting, turn-by-turn, boarding confirmation
-- Parent: live bus tracking, ETA, push notifications
+### React Native Driver App (`apps/mobile-driver`)
+- GPS broadcasting, turn-by-turn navigation, boarding confirmation
+- No direct database access — calls API only
+
+### React Native Parent App (`apps/mobile-parent`)
+- Live bus tracking, ETA, push notifications
 - No direct database access — calls API only
 
 ### `packages/shared`

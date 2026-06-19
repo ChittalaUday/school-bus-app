@@ -15,7 +15,8 @@
 | Understand why X was chosen         | [ADR Index](#architecture-decisions)               |
 | Work on the API                     | [API Repo Docs](repositories/api/README.md)        |
 | Work on the Web app                 | [Web Repo Docs](repositories/web/README.md)        |
-| Work on the Mobile app              | [Mobile Repo Docs](repositories/mobile/README.md)  |
+| Work on the Driver app              | [Mobile Driver Docs](repositories/mobile-driver/README.md) |
+| Work on the Parent app              | [Mobile Parent Docs](repositories/mobile-parent/README.md) |
 | Work on shared packages             | [Shared Repo Docs](repositories/shared/README.md)  |
 | Set up monitoring                   | [Monitoring](operations/monitoring.md)             |
 | Handle an incident                  | [Incident Response](operations/incident-response.md) |
@@ -60,7 +61,13 @@ docs/
 │   │   ├── RULES.md
 │   │   ├── CONSTRAINTS.md
 │   │   └── RESPONSIBILITIES.md
-│   ├── mobile/                        ← React Native app repo docs
+│   ├── mobile-driver/                 ← Driver app repo docs
+│   │   ├── README.md
+│   │   ├── ARCHITECTURE.md
+│   │   ├── RULES.md
+│   │   ├── CONSTRAINTS.md
+│   │   └── RESPONSIBILITIES.md
+│   ├── mobile-parent/                 ← Parent app repo docs
 │   │   ├── README.md
 │   │   ├── ARCHITECTURE.md
 │   │   ├── RULES.md
@@ -105,7 +112,8 @@ docs/
 | ---- | ---- | ------- |
 | API | `apps/api` | Fastify backend — all business logic |
 | Web | `apps/web` | Next.js admin and school portal |
-| Mobile | `apps/mobile` | React Native driver and parent apps |
+| Mobile Driver | `apps/mobile-driver` | React Native driver app |
+| Mobile Parent | `apps/mobile-parent` | React Native parent app |
 | Shared | `packages/shared` | Types, Zod schemas, constants |
 
 ---
