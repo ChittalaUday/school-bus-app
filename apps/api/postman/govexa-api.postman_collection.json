@@ -1,0 +1,141 @@
+{
+  "info": {
+    "name": "Govexa API",
+    "description": "Complete API collection for the Govexa student transportation platform.\n\n**Environments:**\n- Local: `http://localhost:3000`\n- Staging: set `baseUrl` variable accordingly\n\n**Auth:** Most endpoints require `Authorization: Bearer {{accessToken}}`.\nObtain a token via `POST /api/auth/login` and set the `accessToken` collection variable.\n\n**Maintenance rule:** Every route added or changed in `apps/api` MUST have a matching\nrequest added or updated here in the same PR. See `docs/repositories/api/RULES.md`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "govexa-api-v1"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "API base URL. Override per environment."
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT access token. Set after login."
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT refresh token. Set after login."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "System",
+      "description": "System-level endpoints — health, version, status.",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Returns the liveness status of the API, PostgreSQL, and Redis.\n\n**Auth:** None required.\n\n**200 — all services healthy:**\n```json\n{\n  \"status\": \"ok\",\n  \"version\": \"0.0.1\",\n  \"env\": \"development\",\n  \"services\": {\n    \"database\": \"ok\",\n    \"redis\": \"ok\"\n  }\n}\n```\n\n**503 — one or more services degraded:**\n```json\n{\n  \"status\": \"degraded\",\n  \"services\": {\n    \"database\": \"error\",\n    \"redis\": \"ok\"\n  }\n}\n```"
+          },
+          "response": [
+            {
+              "name": "200 — Healthy",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"ok\",\n  \"version\": \"0.0.1\",\n  \"env\": \"development\",\n  \"services\": {\n    \"database\": \"ok\",\n    \"redis\": \"ok\"\n  }\n}"
+            },
+            {
+              "name": "503 — Degraded",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health"]
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"degraded\",\n  \"version\": \"0.0.1\",\n  \"env\": \"development\",\n  \"services\": {\n    \"database\": \"error\",\n    \"redis\": \"ok\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints. Added in GOV-004.",
+      "item": []
+    },
+    {
+      "name": "Students",
+      "description": "Student management and transportation assignments. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Parents",
+      "description": "Parent management and student linking. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Drivers",
+      "description": "Driver management and trip assignments. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Buses",
+      "description": "Bus fleet management. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Routes",
+      "description": "Route and stop management. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Trips",
+      "description": "Trip scheduling and execution. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Tracking",
+      "description": "Live GPS location updates. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Attendance",
+      "description": "Student boarding and drop attendance. Added in GOV-xxx.",
+      "item": []
+    },
+    {
+      "name": "Incidents",
+      "description": "Incident reporting and management. Added in GOV-xxx.",
+      "item": []
+    }
+  ]
+}
