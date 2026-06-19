@@ -1,0 +1,31 @@
+graphhopper:
+  datareader.file: /data/hyderabad.osm.pbf
+  graph.location: /data/graph-cache
+  import.osm.ignored_highways: ""
+  custom_models.directory: /data
+
+  graph.encoded_values: car_access, car_average_speed, country, road_class, roundabout, max_speed, road_environment, foot_access, foot_average_speed, foot_priority, foot_road_access, bike_access, bike_average_speed, bike_priority, bike_road_access, bike_network, ferry_speed, max_weight, max_width, max_height, bus_access, hike_rating, mtb_rating
+
+  profiles:
+    - name: car
+      custom_model_files: [car_hyderabad.json]
+    - name: bus
+      custom_model_files: [bus_hyderabad.json]
+    - name: foot
+      custom_model_files: [foot.json]
+
+  profiles_ch:
+    - profile: car
+    - profile: bus
+
+  profiles_lm: []
+
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      bind_host: 0.0.0.0
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: 0.0.0.0

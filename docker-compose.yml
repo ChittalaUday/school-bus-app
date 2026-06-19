@@ -1,0 +1,71 @@
+name: govexa
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: govexa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-govexa}
+      POSTGRES_USER: ${POSTGRES_USER:-govexa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-govexa}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: govexa-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  graphhopper:
+    image: israelhikingmap/graphhopper:latest
+    container_name: govexa-graphhopper
+    restart: unless-stopped
+    ports:
+      - "8989:8989"
+    volumes:
+      - ./graphhopper/data:/data
+    environment:
+      - JAVA_OPTS=-Xmx2g -Xms512m
+    command: --input /data/hyderabad.osm.pbf --graph-cache /data/graph-cache --config /data/config.yml
+
+  # nginx is wired in Phase 12 (infrastructure).
+  # Run with: docker compose --profile production up
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: govexa-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  redis_data:

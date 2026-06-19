@@ -1,0 +1,12 @@
+services:
+  graphhopper:
+    image: israelhikingmap/graphhopper:latest
+    container_name: graphhopper
+    ports:
+      - "8989:8989"
+    volumes:
+      - ./data:/data
+    environment:
+      - JAVA_OPTS=-Xmx2g -Xms512m
+    command: --input /data/hyderabad.osm.pbf --graph-cache /data/graph-cache --config /data/config.yml
+    restart: unless-stopped

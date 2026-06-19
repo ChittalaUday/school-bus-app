@@ -1,0 +1,53 @@
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── Build outputs ────────────────────────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── TypeScript ───────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── OS / Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ─── Prisma ───────────────────────────────────────────────────────────────────
+apps/api/prisma/migrations/*.sql
+
+# ─── GraphHopper graph cache (large binary) ───────────────────────────────────
+graphhopper/data/graph-cache/
+osrm/data/
+
+# ─── OSM source data ──────────────────────────────────────────────────────────
+*.osm.pbf
+
+# ─── Docker volumes ───────────────────────────────────────────────────────────
+.docker/
+
+# ─── Test coverage ────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── React Native ─────────────────────────────────────────────────────────────
+apps/mobile-driver/android/
+apps/mobile-driver/ios/
+apps/mobile-driver/.expo/
+apps/mobile-parent/android/
+apps/mobile-parent/ios/
+apps/mobile-parent/.expo/
