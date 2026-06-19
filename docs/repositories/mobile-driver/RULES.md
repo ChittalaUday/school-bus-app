@@ -56,3 +56,23 @@
 ## Boundary
 
 Must never import from `apps/mobile-parent`, `apps/api`, or `apps/web`.
+
+---
+
+## Comments
+
+- Do not add comments that describe what the code does — well-named screens, hooks, and services do that
+- Only add a comment when the **why** is non-obvious: a platform quirk, a React Native lifecycle edge case, or something that would surprise a future reader
+- No commented-out code — delete it; git history is the record
+- One line max — no multi-line comment blocks
+
+---
+
+## Commits
+
+- Format: `type(scope): GOV-{ID} short description`
+- Allowed types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+- Subject line: imperative mood, max 72 characters, no trailing period
+- One logical change per commit — never bundle unrelated changes
+- Never commit: commented-out code, `console.log`, or TODO comments without a ticket reference (`GOV-{ID}`)
+- Message must describe **why**, not what — the diff already shows what changed

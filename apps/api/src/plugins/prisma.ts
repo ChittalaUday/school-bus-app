@@ -11,8 +11,7 @@ declare module "fastify" {
 }
 
 const prismaPlugin: FastifyPluginAsync = async (fastify) => {
-  // Pool size ceiling (max:10 per CONSTRAINTS.md) is set via DATABASE_URL query param:
-  // postgresql://...?connection_limit=10
+  // pool size is capped via ?connection_limit=10 in DATABASE_URL, not here (see CONSTRAINTS.md)
   const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
 
   const prisma = new PrismaClient({

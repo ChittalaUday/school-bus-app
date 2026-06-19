@@ -17,8 +17,9 @@ export type Env = z.infer<typeof envSchema>;
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error("Invalid environment variables:");
-  console.error(JSON.stringify(parsed.error.flatten().fieldErrors, null, 2));
+  // process.stderr before Fastify logger exists — console is unavailable here
+  process.stderr.write("Invalid environment variables:\n");
+  process.stderr.write(JSON.stringify(parsed.error.flatten().fieldErrors, null, 2) + "\n");
   process.exit(1);
 }
 

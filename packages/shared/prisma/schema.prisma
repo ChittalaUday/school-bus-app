@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Placeholder model — enables client generation for the scaffold.
+// Full domain schema (Institution, Campus, Student, Parent, Driver, Bus,
+// Route, Stop, Trip, TransportationAttendance, Incident) is added in GOV-003.
+
+model SchemaVersion {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  @@map("schema_version")
+}

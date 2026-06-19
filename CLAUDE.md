@@ -61,6 +61,22 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 - Read the relevant `RESPONSIBILITIES.md` — do not work outside project boundaries
 - Read the relevant `DESIGN_PRINCIPLES.md` — understand the reasoning behind decisions
 
+### Comments (all repositories)
+
+- Do not add comments that describe what the code does — well-named identifiers already do that
+- Only add a comment when the **why** is non-obvious: a hidden constraint, a subtle invariant, a workaround for a specific external behavior, or something that would genuinely surprise a future reader
+- No commented-out code — delete it; git history is the record
+- One line max — no multi-line comment blocks or docstring paragraphs on internal code
+
+### Commits (all repositories)
+
+- Format: `type(scope): GOV-{ID} short description`
+- Allowed types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+- Subject line: imperative mood, max 72 characters, no trailing period
+- One logical change per commit — never bundle unrelated changes
+- Never commit: commented-out code, `console.log`, `debugger`, or TODO without a ticket reference
+- Message must describe **why**, not what — the diff already shows what changed
+
 ---
 
 ## Technology Reference
