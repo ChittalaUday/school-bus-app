@@ -65,6 +65,19 @@ services:
       retries: 6
       start_period: 60s
 
+  # Mailhog — local SMTP for email testing in dev (no real emails sent)
+  # Access inbox at http://localhost:8025
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: govexa-mailhog
+    restart: unless-stopped
+    networks: [govexa]
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    profiles:
+      - dev
+
   # Nginx is wired in Phase 12. Run with: docker compose --profile production up
   nginx:
     image: nginx:1.25-alpine

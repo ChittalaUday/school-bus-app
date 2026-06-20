@@ -1,0 +1,23 @@
+import type { ReactNode } from 'react';
+import { View } from 'react-native';
+
+import { ThemedText } from './themed-text';
+import { ThemedView } from './themed-view';
+
+type HintRowProps = {
+  title?: string;
+  hint?: ReactNode;
+};
+
+export function HintRow({ title = 'Try editing', hint = 'app/index.tsx' }: HintRowProps) {
+  return (
+    // NativeWind: flex-row and justify-between are fully supported
+    <View className="flex-row justify-between">
+      <ThemedText type="small">{title}</ThemedText>
+      {/* NativeWind: rounded and padding classes are fully supported */}
+      <ThemedView type="backgroundSelected" className="rounded-lg px-2 py-0.5">
+        <ThemedText themeColor="textSecondary">{hint}</ThemedText>
+      </ThemedView>
+    </View>
+  );
+}

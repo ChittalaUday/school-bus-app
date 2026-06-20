@@ -1,3 +1,0 @@
-// Canonical schema has moved to apps/shared/prisma/schema.prisma
-// All prisma commands in package.json pass --schema automatically.
-// Do not run the Prisma CLI directly from this directory.

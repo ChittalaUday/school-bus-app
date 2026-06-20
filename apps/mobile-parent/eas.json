@@ -1,0 +1,48 @@
+{
+  "cli": {
+    "version": ">= 18.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "APP_ENV": "development"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "env": {
+        "APP_ENV": "preview"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "env": {
+        "APP_ENV": "production"
+      }
+    }
+  },
+  "submit": {
+    "_how_to_use": "Run: npm run eas -- submit --profile production. Fill in the values below before submitting.",
+    "production": {
+      "ios": {
+        "_note": "Find appleId + appleTeamId at https://appstoreconnect.apple.com — ascAppId is the numeric App ID under App Information",
+        "appleId": "<your-apple-id@email.com>",
+        "ascAppId": "<numeric-app-store-connect-app-id>",
+        "appleTeamId": "<your-apple-team-id>"
+      },
+      "android": {
+        "_note": "Download google-service-account.json from Google Play Console → Setup → API access",
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}

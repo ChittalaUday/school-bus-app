@@ -11,6 +11,17 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   CORS_ORIGIN: z.string().default("http://localhost:3001"),
+  APP_URL: z.string().url().default("http://localhost:3001"),
+
+  // Email — Mailhog (port 1025) for dev; set real SMTP credentials in prod
+  SMTP_HOST: z.string().default("localhost"),
+  SMTP_PORT: z.coerce.number().default(1025),
+  SMTP_USER: z.string().default(""),
+  SMTP_PASS: z.string().default(""),
+  SMTP_FROM: z.string().default("noreply@govexa.in"),
+
+  // Telegram Bot — optional; OTP and alerts skip silently when not set
+  TELEGRAM_BOT_TOKEN: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -25,3 +36,15 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+export const mailConfig = {
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT,
+  auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
+  from: env.SMTP_FROM,
+};
+
+export const telegramConfig = {
+  token: env.TELEGRAM_BOT_TOKEN,
+};
+

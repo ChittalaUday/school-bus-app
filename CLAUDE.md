@@ -86,7 +86,7 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 | API framework | Fastify |
 | ORM | Prisma |
 | Validation | Zod |
-| Auth | JWT + refresh tokens |
+| Auth | JWT + refresh tokens (argon2 passwords); Firebase optional future |
 | Database | PostgreSQL + PostGIS |
 | Cache / queues | Redis |
 | Realtime | Socket.IO |
@@ -96,11 +96,12 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 | UI components | shadcn/ui + Tailwind CSS |
 | Maps | MapLibre GL JS / MapLibre React Native |
 | Mobile | React Native |
-| Notifications | Novu + Telegram + SMTP |
+| Notifications | Nodemailer (SMTP/Mailhog) + Telegram Bot API — single `notifications.ts` service |
 | Monitoring | Grafana + Prometheus + Loki + Pino |
 | Infrastructure | Docker + Nginx + VPS |
 
-**Not used:** Kubernetes, Kafka, RabbitMQ, ElasticSearch, GraphQL, Google Maps, Firebase, Microservices.
+**Not used:** Kubernetes, Kafka, RabbitMQ, ElasticSearch, GraphQL, Google Maps, Microservices.
+**Not yet wired:** Firebase (optional future login method — do not add until GOV ticket created).
 
 ---
 
@@ -109,7 +110,8 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 | Service | Port | Status |
 | ----------- | ---- | ------ |
 | GraphHopper | 8989 | Running — `bus`, `car`, `foot` profiles, Hyderabad dataset |
-| OSRM | 5001 | Running — evaluated, NOT used in production (GraphHopper chosen) |
+| Mailhog | 1025/8025 | Dev SMTP + inbox UI (`--profile dev`) |
+| OSRM | 5001 | Evaluated, NOT used in production (GraphHopper chosen) |
 
 ---
 
@@ -119,6 +121,13 @@ Each project has its own `README.md`, `ARCHITECTURE.md`, `RULES.md`, `CONSTRAINT
 - Commit: `feat(scope): GOV-{ID} short description`
 - Never commit to `main` directly
 - One ticket = one branch = one PR
+
+### Commit Gate (non-negotiable)
+
+- **Never commit autonomously.** Always present the diff and ask the user for an explicit "go ahead" before running `git commit`
+- Implement, verify (typecheck + lint), then stop and say: "Ready to commit — give the signal"
+- The user's signal to commit is explicit: "commit", "go ahead", "yes commit", or similar clear approval
+- No exceptions — not even for trivial one-line fixes
 
 ---
 
@@ -141,6 +150,7 @@ Use these to reduce setup friction when starting or reviewing work:
 | `/new-page {section/page} GOV-{ID}` | Scaffold a new web page in the correct App Router location |
 | `/check` | Review current diff against RULES, CONSTRAINTS, DESIGN_PRINCIPLES, and Postman sync |
 | `/postman` | Sync Postman collection with current route files (run after any route change) |
+| `/review` | Run full multi-domain code review (Backend, Web, Mobile, Shared, DevOps, Architecture agents in parallel); merge to main and push if all pass |
 | `/trip-context` | Load complete student transportation lifecycle into context |
 | `/student-status` | Reference all canonical student status states and attendance options |
 | `/incident` | Load incident reporting flow and constraints |
