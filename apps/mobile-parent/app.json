@@ -8,9 +8,11 @@
     "scheme": "mobileparent",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.chittalauday.mobileparent"
     },
     "android": {
+      "package": "com.chittalauday.mobileparent",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

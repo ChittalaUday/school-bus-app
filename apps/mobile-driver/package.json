@@ -31,14 +31,18 @@
   "devDependencies": {
     "@types/react": "~19.2.2",
     "eas-cli": "~18.5.0",
+    "expo-mcp": "~0.2.1",
     "tailwindcss": "^3.4.19",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "prebuild": "expo prebuild",
+    "run:android": "expo run:android",
+    "run:ios": "expo run:ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
     "eas": "export $(grep -v '^#' .env.local | xargs) && eas",
