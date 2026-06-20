@@ -42,7 +42,8 @@ export class AuthService {
 
     const inviteUrl = `${env.APP_URL}/auth/accept?token=${rawToken}`;
 
-    await notify.userInvited({ toEmail: email, role, inviteUrl, accessCode: rawToken });
+    // Detached from request path — SMTP failure must not fail a committed invite
+    notify.userInvited({ toEmail: email, role, inviteUrl, accessCode: rawToken }).catch(() => undefined);
 
     return { userId: user.id, email: user.email, role: user.role, expiresAt };
   }

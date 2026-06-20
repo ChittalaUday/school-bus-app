@@ -1,14 +1,16 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { AuthResponse } from "@govexa/shared";
+import { useAuthStore, getRefreshToken } from "@/stores/auth.store";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000",
+  baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use((config) => {
-  const token = Cookies.get("accessToken");
+  const token = useAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -26,13 +28,10 @@ api.interceptors.response.use(
 
     if (!refreshing) {
       refreshing = axios
-        .post(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000"}/auth/refresh`, {
-          refreshToken: Cookies.get("refreshToken"),
-        })
+        .post(`${BASE_URL}/auth/refresh`, { refreshToken: getRefreshToken() })
         .then((res) => {
-          const { accessToken, refreshToken } = res.data as AuthResponse;
-          Cookies.set("accessToken", accessToken, { secure: true, sameSite: "strict" });
-          Cookies.set("refreshToken", refreshToken, { secure: true, sameSite: "strict" });
+          const { accessToken, refreshToken, user } = res.data as AuthResponse;
+          useAuthStore.getState().login(user, accessToken, refreshToken);
           return accessToken;
         })
         .finally(() => {

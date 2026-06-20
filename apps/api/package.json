@@ -15,6 +15,7 @@
     "lint:fix": "eslint src --fix",
     "db:generate": "prisma generate --schema ../shared/prisma/schema.prisma",
     "db:migrate": "prisma migrate dev --schema ../shared/prisma/schema.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema ../shared/prisma/schema.prisma",
     "db:push": "prisma db push --schema ../shared/prisma/schema.prisma",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio"

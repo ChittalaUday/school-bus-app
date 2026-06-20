@@ -1,8 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import Cookies from "js-cookie";
 
 interface AuthUser {
   id: string;
@@ -18,27 +16,23 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      accessToken: null,
-      isAuthenticated: false,
-      login: (user, accessToken, refreshToken) => {
-        Cookies.set("accessToken", accessToken, { secure: true, sameSite: "strict" });
-        Cookies.set("refreshToken", refreshToken, { secure: true, sameSite: "strict" });
-        set({ user, accessToken, isAuthenticated: true });
-      },
-      logout: () => {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        set({ user: null, accessToken: null, isAuthenticated: false });
-      },
-    }),
-    {
-      name: "govexa-auth",
-      storage: createJSONStorage(() => sessionStorage),
-      partialize: (state) => ({ user: state.user, accessToken: state.accessToken, isAuthenticated: state.isAuthenticated }),
-    },
-  ),
-);
+// Refresh token held in module memory only — never written to storage or JS-accessible cookies.
+let _refreshToken: string | null = null;
+
+export function getRefreshToken() {
+  return _refreshToken;
+}
+
+export const useAuthStore = create<AuthState>()((set) => ({
+  user: null,
+  accessToken: null,
+  isAuthenticated: false,
+  login: (user, accessToken, refreshToken) => {
+    _refreshToken = refreshToken;
+    set({ user, accessToken, isAuthenticated: true });
+  },
+  logout: () => {
+    _refreshToken = null;
+    set({ user: null, accessToken: null, isAuthenticated: false });
+  },
+}));

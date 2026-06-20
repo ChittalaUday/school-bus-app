@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { Permission } from "@govexa/shared";
 import { AuthService } from "./auth.service";
+import { rateLimitPresets } from "../../plugins/rate-limit";
 import {
   inviteUserBodySchema,
   acceptInvitationBodySchema,
@@ -29,7 +30,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   fastify.post(
     "/accept",
-    { schema: { body: acceptInvitationBodySchema } },
+    {
+      config: { rateLimit: rateLimitPresets.auth },
+      schema: { body: acceptInvitationBodySchema },
+    },
     async (req, reply) => {
       const { token, password } = req.body as { token: string; password: string };
       const result = await service.acceptInvitation(token, password);
@@ -39,7 +43,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   fastify.post(
     "/login",
-    { schema: { body: loginBodySchema } },
+    {
+      config: { rateLimit: rateLimitPresets.auth },
+      schema: { body: loginBodySchema },
+    },
     async (req, reply) => {
       const { email, password } = req.body as { email: string; password: string };
       const result = await service.login(email, password);
@@ -49,7 +56,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   fastify.post(
     "/refresh",
-    { schema: { body: refreshBodySchema } },
+    {
+      config: { rateLimit: rateLimitPresets.auth },
+      schema: { body: refreshBodySchema },
+    },
     async (req, reply) => {
       const { refreshToken } = req.body as { refreshToken: string };
       const result = await service.refresh(refreshToken);

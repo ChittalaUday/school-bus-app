@@ -11,10 +11,8 @@ type HintRowProps = {
 
 export function HintRow({ title = 'Try editing', hint = 'app/index.tsx' }: HintRowProps) {
   return (
-    // NativeWind: flex-row and justify-between are fully supported
     <View className="flex-row justify-between">
       <ThemedText type="small">{title}</ThemedText>
-      {/* NativeWind: rounded and padding classes are fully supported */}
       <ThemedView type="backgroundSelected" className="rounded-lg px-2 py-0.5">
         <ThemedText themeColor="textSecondary">{hint}</ThemedText>
       </ThemedView>
