@@ -1,11 +1,13 @@
 "use client";
 
 import { create } from "zustand";
+import Cookies from "js-cookie";
+import type { UserRole } from "@govexa/shared";
 
-interface AuthUser {
+export interface AuthUser {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 
 interface AuthState {
@@ -23,16 +25,21 @@ export function getRefreshToken() {
   return _refreshToken;
 }
 
+const SESSION_COOKIE = "govexa-session";
+
 export const useAuthStore = create<AuthState>()((set) => ({
   user: null,
   accessToken: null,
   isAuthenticated: false,
   login: (user, accessToken, refreshToken) => {
     _refreshToken = refreshToken;
+    // Signal cookie for middleware route protection — not used for API auth
+    Cookies.set(SESSION_COOKIE, "1", { sameSite: "Lax" });
     set({ user, accessToken, isAuthenticated: true });
   },
   logout: () => {
     _refreshToken = null;
+    Cookies.remove(SESSION_COOKIE);
     set({ user: null, accessToken: null, isAuthenticated: false });
   },
 }));

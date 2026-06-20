@@ -2,7 +2,7 @@ import axios from "axios";
 import { AuthResponse } from "@govexa/shared";
 import { useAuthStore, getRefreshToken } from "@/stores/auth.store";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
 const api = axios.create({
   baseURL: BASE_URL,
