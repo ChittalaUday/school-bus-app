@@ -6,13 +6,49 @@ datasource db {
   provider = "postgresql"
 }
 
-// Placeholder model — enables client generation for the scaffold.
-// Full domain schema (Institution, Campus, Student, Parent, Driver, Bus,
-// Route, Stop, Trip, TransportationAttendance, Incident) is added in GOV-003.
+enum UserRole {
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  TRANSPORT_MANAGER
+  DRIVER
+  PARENT
+}
 
-model SchemaVersion {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+enum UserStatus {
+  PENDING      // invited — invitation not yet accepted
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
 
-  @@map("schema_version")
+model User {
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  passwordHash         String?        // null until invitation accepted
+  role                 UserRole
+  status               UserStatus     @default(PENDING)
+  phone                String?        @unique
+  phoneVerified        Boolean        @default(false)
+  telegramChatId       String?        @unique
+  invitationToken      String?        @unique  // SHA-256 hashed
+  invitationExpiresAt  DateTime?
+  invitationAcceptedAt DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  refreshTokens        RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  @@index([userId])
+  @@map("refresh_tokens")
 }

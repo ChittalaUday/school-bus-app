@@ -1,10 +1,15 @@
 name: govexa
 
+networks:
+  govexa:
+    driver: bridge
+
 services:
   postgres:
     image: postgis/postgis:16-3.4
     container_name: govexa-postgres
     restart: unless-stopped
+    networks: [govexa]
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-govexa}
       POSTGRES_USER: ${POSTGRES_USER:-govexa}
@@ -14,15 +19,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-govexa}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-govexa} -d ${POSTGRES_DB:-govexa}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
     container_name: govexa-redis
     restart: unless-stopped
+    networks: [govexa]
     command: redis-server --appendonly yes
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -33,25 +40,50 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 5s
 
   graphhopper:
     image: israelhikingmap/graphhopper:latest
     container_name: govexa-graphhopper
     restart: unless-stopped
+    networks: [govexa]
     ports:
-      - "8989:8989"
+      - "${GRAPHHOPPER_PORT:-8989}:8989"
     volumes:
       - ./graphhopper/data:/data
     environment:
-      - JAVA_OPTS=-Xmx2g -Xms512m
-    command: --input /data/hyderabad.osm.pbf --graph-cache /data/graph-cache --config /data/config.yml
+      JAVA_OPTS: "-Xmx2g -Xms512m"
+    command: >
+      --input /data/hyderabad.osm.pbf
+      --graph-cache /data/graph-cache
+      --config /data/config.yml
+    healthcheck:
+      # graph-cache is pre-built so startup is fast; 60s covers slow hosts
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8989/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
 
-  # nginx is wired in Phase 12 (infrastructure).
-  # Run with: docker compose --profile production up
+  # Mailhog — local SMTP for email testing in dev (no real emails sent)
+  # Access inbox at http://localhost:8025
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: govexa-mailhog
+    restart: unless-stopped
+    networks: [govexa]
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    profiles:
+      - dev
+
+  # Nginx is wired in Phase 12. Run with: docker compose --profile production up
   nginx:
     image: nginx:1.25-alpine
     container_name: govexa-nginx
     restart: unless-stopped
+    networks: [govexa]
     ports:
       - "80:80"
       - "443:443"
@@ -68,4 +100,8 @@ services:
 
 volumes:
   postgres_data:
+    labels:
+      com.govexa.description: "PostgreSQL + PostGIS persistent data"
   redis_data:
+    labels:
+      com.govexa.description: "Redis AOF persistent data"

@@ -8,7 +8,9 @@ import { AppError } from "./utils/errors";
 import prismaPlugin from "./plugins/prisma";
 import redisPlugin from "./plugins/redis";
 import rateLimitPlugin from "./plugins/rate-limit";
+import authHookPlugin from "./plugins/auth-hook";
 import healthPlugin from "./modules/health/health.plugin";
+import authPlugin from "./modules/auth/auth.plugin";
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -61,8 +63,10 @@ export async function buildApp() {
   // order matters — prisma and redis must be available before domain modules load
   await fastify.register(prismaPlugin);
   await fastify.register(redisPlugin);
+  await fastify.register(authHookPlugin);
 
   await fastify.register(healthPlugin);
+  await fastify.register(authPlugin);
 
   fastify.setErrorHandler((error: FastifyError, req, reply) => {
     const isDev = env.NODE_ENV !== "production";

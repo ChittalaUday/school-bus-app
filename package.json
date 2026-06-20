@@ -10,7 +10,11 @@
     "build:web": "pnpm build:shared && pnpm --filter web build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "typecheck": "pnpm build:shared && pnpm -r typecheck"
+    "typecheck": "pnpm build:shared && pnpm -r typecheck",
+    "docker:up": "docker compose up -d postgres redis graphhopper",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:reset": "docker compose down -v && docker compose up -d postgres redis graphhopper"
   },
   "engines": {
     "node": ">=20.0.0",
