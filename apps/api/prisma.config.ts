@@ -20,7 +20,7 @@ try {
 const databaseUrl = process.env["DATABASE_URL"];
 
 export default defineConfig({
-  schema: path.join("..", "..", "packages", "shared", "prisma", "schema.prisma"),
+  schema: path.join("..", "shared", "prisma", "schema.prisma"),
   ...(databaseUrl != null && {
     datasource: { url: databaseUrl },
   }),
